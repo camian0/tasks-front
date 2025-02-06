@@ -1,0 +1,1 @@
+export const APP_HOST = import.meta.env.VITE_API_ENDPOINT_URL;
