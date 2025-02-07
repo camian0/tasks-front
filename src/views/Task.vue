@@ -1,21 +1,17 @@
 <template>
   <p>Bienvenido a la vista de tareas</p>
+  <ListTask />
 </template>
 <script>
-import { APP_HOST } from "../config/constants.js";
+import ListTask from "../components/Task/List.vue";
 
 export default {
-  name: "TaskVue",
-  data() {
-    return {
-      // apiUrl: import.meta.env.VITE_API_ENDPOINT_URL,
-    };
+  name: "TaskView",
+  components: {
+    ListTask,
   },
-
-  methods: {
-    test() {
-      console.log("url en vista tareas", APP_HOST);
-    },
+  data() {
+    return {};
   },
 };
 </script>
