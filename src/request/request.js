@@ -26,8 +26,8 @@ export const postData = async function (url = "", data = {}, needToken) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    const data = await response.json();
-    return { status: response.status, data };
+    const dataResponse = await response.json();
+    return { status: response.status, "data": dataResponse };
 };
 
 export const deleteRequest = async function (url = "", needToken) {
@@ -72,8 +72,8 @@ export const getData = async function (url = "", params = {}) {
         redirect: "follow",
         referrerPolicy: "no-referrer",
     });
-    const data = await response.json();
-    return { status: response.status, data };
+    const dataResponse = await response.json();
+    return { status: response.status, "data": dataResponse };
 };
 
 export const getRawData = async function (url = "") {
@@ -141,8 +141,8 @@ export const putData = async function (url = "", data = {}) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    const data = await response.json();
-    return { status: response.status, data };
+    const dataResponse = await response.json();
+    return { status: response.status, "data": dataResponse };
 };
 
 export const deleteData = async function (url = "", data = {}) {
@@ -160,8 +160,8 @@ export const deleteData = async function (url = "", data = {}) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    const data = await response.json();
-    return { status: response.status, data };
+    const dataResponse = await response.json();
+    return { status: response.status, "data": dataResponse };
 };
 
 export const downloadData = async function (
