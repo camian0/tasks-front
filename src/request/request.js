@@ -4,8 +4,6 @@ import { APP_HOST } from "../config/constants.js";
 
 // let loading;
 
-console.log("url api ", APP_HOST)
-
 export const postData = async function (url = "", data = {}, needToken) {
     url = APP_HOST + url;
     let aHeaders = new Headers();
@@ -28,7 +26,8 @@ export const postData = async function (url = "", data = {}, needToken) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    return response.json();
+    const data = await response.json();
+    return { status: response.status, data };
 };
 
 export const deleteRequest = async function (url = "", needToken) {
@@ -68,12 +67,13 @@ export const getData = async function (url = "", params = {}) {
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            // Authorization: "Bearer " + localStorage.getItem("token"),
         },
         redirect: "follow",
         referrerPolicy: "no-referrer",
     });
-    return response.json();
+    const data = await response.json();
+    return { status: response.status, data };
 };
 
 export const getRawData = async function (url = "") {
@@ -141,7 +141,8 @@ export const putData = async function (url = "", data = {}) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    return response.json();
+    const data = await response.json();
+    return { status: response.status, data };
 };
 
 export const deleteData = async function (url = "", data = {}) {
@@ -159,7 +160,8 @@ export const deleteData = async function (url = "", data = {}) {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(data),
     });
-    return response.json();
+    const data = await response.json();
+    return { status: response.status, data };
 };
 
 export const downloadData = async function (
