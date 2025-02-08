@@ -21,7 +21,7 @@
         <td>{{ formatDate(task.finish_date) }}</td>
         <td>{{ task.task_state }}</td>
         <td>{{ task.file_name }}</td>
-        <td>actualizacion, listar1, eliminar</td>
+        <td>actualizacion, <button @click="sendOneTask(task)">listar1</button>, eliminar</td>
       </tr>
     </tbody>
   </table>
@@ -33,6 +33,7 @@ import { getData } from "../../request/request";
 
 export default {
   name: "ListTask",
+  emits: ["oneTask"], // Declara el evento aquí
   data() {
     return {
       listTask: [],
@@ -54,7 +55,6 @@ export default {
     },
 
     formatDate(receivedDate) {
-      console.log("recibida", receivedDate);
       const date = new Date(receivedDate);
       const year = date.getUTCFullYear();
       const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // month comienza desde 0
@@ -63,6 +63,10 @@ export default {
       const minutes = String(date.getUTCMinutes()).padStart(2, "0");
 
       return `${day}/${month}/${year} ${hour}:${minutes}`;
+    },
+
+    sendOneTask(event) {
+      this.$emit("oneTask", event);
     },
   },
 };

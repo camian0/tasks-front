@@ -1,6 +1,6 @@
 <template>
   <p>Bienvenido a la vista de tareas</p>
-  <ListTask />
+  <ListTask @oneTask="receivedTask" />
   <CreateTask />
 </template>
 <script>
@@ -15,6 +15,12 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+    receivedTask(eventReceived) {
+      let task = { ...eventReceived };
+      console.log("Evento recibido del hijo aqui en view task:", task);
+    },
   },
 };
 </script>
