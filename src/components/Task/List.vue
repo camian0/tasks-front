@@ -1,31 +1,36 @@
 <template>
-  <p>Listar tareas</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>nombre tarea</th>
-        <th>correo</th>
-        <th>Fecha finalizacion</th>
-        <th>Estado</th>
-        <th>Nombre archivos</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody v-if="this.listTask.length > 0">
-      <tr v-for="task in listTask" :key="task.id">
-        <td>{{ task.id }}</td>
-        <td>{{ task.task_name }}</td>
-        <td>{{ task.email }}</td>
-        <td>{{ formatDate(task.finish_date) }}</td>
-        <td>{{ task.task_state }}</td>
-        <td>{{ task.file_name }}</td>
-        <td>actualizacion, <button @click="sendOneTask(task)">listar1</button>, eliminar</td>
-      </tr>
-    </tbody>
-  </table>
-  <p v-if="this.listTask.length == 0">No hay tareas para mostrar</p>
+  <div>
+    <p>Listar tareas</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>nombre tarea</th>
+          <th>correo</th>
+          <th>Fecha finalizacion</th>
+          <th>Estado</th>
+          <th>Nombre archivos</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody v-if="this.listTask.length > 0">
+        <tr v-for="task in listTask" :key="task.id">
+          <td>{{ task.id }}</td>
+          <td>{{ task.task_name }}</td>
+          <td>{{ task.email }}</td>
+          <td>{{ formatDate(task.finish_date) }}</td>
+          <td>{{ task.task_state }}</td>
+          <td>{{ task.file_name }}</td>
+          <td>
+            <button @click="handleUpdateTask(task)">Actualizar</button>
+            <button @click="sendOneTask(task)">listar1</button>
+            , eliminar
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="this.listTask.length == 0">No hay tareas para mostrar</p>
+  </div>
 </template>
 
 <script>
@@ -33,7 +38,7 @@ import { getData } from "../../request/request";
 
 export default {
   name: "ListTask",
-  emits: ["oneTask"], // Declara el evento aquí
+  emits: ["oneTask", "updateTask"], // Declara el evento aquí
   data() {
     return {
       listTask: [],
@@ -67,6 +72,10 @@ export default {
 
     sendOneTask(event) {
       this.$emit("oneTask", event);
+    },
+
+    handleUpdateTask(event) {
+      this.$emit("updateTask", event);
     },
   },
 };
