@@ -7,9 +7,9 @@
   <input type="datetime-local" v-model="model.finish_date" placeholder="Fecha de terminación" />
   <br />
   <select v-model="model.task_state" placeholder="Estado de la tarea">
-    <option value="to do" selected>Por Hacer</option>
-    <option value="process">En proceso</option>
-    <option value="finish">Finalizada</option>
+    <option value="TO DO" selected>Por Hacer</option>
+    <option value="PROCESS">En proceso</option>
+    <option value="FINISHg">Finalizada</option>
   </select>
   <br />
   <input type="file" @change="handleFileChange" placeholder="Selecciona un archivo" />
