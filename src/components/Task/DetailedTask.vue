@@ -27,6 +27,9 @@ export default {
   },
   methods: {
     formatDate(receivedDate) {
+      if (receivedDate === undefined) {
+        return "";
+      }
       const date = new Date(receivedDate);
       const year = date.getUTCFullYear();
       const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // month comienza desde 0
