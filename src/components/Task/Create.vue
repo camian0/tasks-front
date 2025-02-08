@@ -42,9 +42,11 @@ export default {
       modelSent.finish_date = this.processDate(this.model.finish_date);
       modelSent.task_state = modelSent.task_state.toUpperCase();
       let hashFile = this.getHashNameFile() + this.model.file.name;
+      modelSent.file_name = hashFile;
 
       // comprobamos que se haya seleccionado un archivo
       if (this.model.file !== "" && this.model.file !== undefined) {
+        // peticion para obtener url firmada
         let response = await postData(`file/${hashFile}`);
         console.log("response", response);
         if (response.status === 200) {
@@ -55,7 +57,11 @@ export default {
             formData.append(key, value);
           });
           formData.append("file", this.model.file);
-          await this.createFile(formData, this.urlUploadFile);
+          response = await this.createFile(formData, this.urlUploadFile);
+          if (response.status == 204) {
+            // peticion para crear la tarea
+            await this.createTask(modelSent);
+          }
           return;
         }
         // mensaje para el error
@@ -66,10 +72,20 @@ export default {
     async createFile(formData, signedUrl) {
       let response = await postFormData(signedUrl, formData);
       console.log("respuesta guardado archivo", response);
-      // if (response.status === 204) {
-      //   return;
-      // }
-      // console.log(response.data.message);
+      if (response.status === 204) {
+        return response;
+      }
+    },
+
+    async createTask(modelSent) {
+      console.log("tarea para guardar completa", modelSent);
+      let response = await postData("tasks", modelSent);
+      if (response.status === 200) {
+        console.log(response.data.message);
+
+        return;
+      }
+      console.log(response.data.message);
     },
 
     handleFileChange(event) {
@@ -94,6 +110,16 @@ export default {
       // Obtener formato ISO completo
       const isoDate = date.toISOString();
       return isoDate;
+    },
+
+    cleanModel() {
+      this.model = {
+        task_name: "",
+        email: "",
+        finish_date: "",
+        task_state: "to do",
+        file: "",
+      };
     },
   },
 };
