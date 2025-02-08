@@ -1,10 +1,11 @@
 <template>
   <div>
     <p>Bienvenido a la vista de tareas</p>
-    <ListTask @one-task="receivedTask" @update-task="receivedTask" />
+    <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
     <!-- <CreateTask /> -->
     <!-- <DetailedTask :task="taskToSend" /> -->
-    <UpdateTask :task="taskToSend" />
+    <!-- <UpdateTask :task="taskToSend" /> -->
+    <DeleteTask :id="idToDelete" />
   </div>
 </template>
 <script>
@@ -12,6 +13,7 @@ import ListTask from "@/components/Task/List.vue";
 import CreateTask from "@/components/Task/Create.vue";
 import DetailedTask from "@/components/Task/DetailedTask.vue";
 import UpdateTask from "@/components/Task/Update.vue";
+import DeleteTask from "@/components/Task/Delete.vue";
 
 export default {
   name: "TaskView",
@@ -20,15 +22,24 @@ export default {
     CreateTask,
     DetailedTask,
     UpdateTask,
+    DeleteTask,
   },
   data() {
     return {
       taskToSend: {},
+      idToDelete: -5,
     };
   },
   methods: {
     receivedTask(eventReceived) {
       this.taskToSend = { ...eventReceived };
+    },
+
+    taskToDelete(idReceived) {
+      console.log("id tarea a elminar", idReceived);
+      if (idReceived) {
+        this.idToDelete = idReceived;
+      }
     },
   },
 };
