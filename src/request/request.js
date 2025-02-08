@@ -1,6 +1,7 @@
 apiUrl: import.meta.env.VITE_API_ENDPOINT_URL;
 
 import { APP_HOST } from "../config/constants.js";
+import { convertXML } from "@/config/constants.js";
 
 // let loading;
 
@@ -8,14 +9,15 @@ export const postData = async function (url = "", data = {}, needToken) {
     url = APP_HOST + url;
     let aHeaders = new Headers();
     aHeaders.append("Content-Type", "application/json");
-    if (needToken) {
-        let token = localStorage.getItem("token");
-        if (token != null) {
-            aHeaders.append("Authorization", `${"Bearer " + token}`);
-        } else {
-            throw "No se pudo obtener el token";
-        }
-    }
+    // if (needToken) {
+    //     let token = localStorage.getItem("token");
+    //     if (token != null) {
+    //         aHeaders.append("Authorization", `${"Bearer " + token}`);
+    //     } else {
+    //         throw "No se pudo obtener el token";
+    //     }
+    // }
+
     const response = await fetch(url, {
         method: "POST",
         mode: "cors",
@@ -34,14 +36,14 @@ export const deleteRequest = async function (url = "", needToken) {
     url = APP_HOST + url;
     let aHeaders = new Headers();
     aHeaders.append("Content-Type", "application/json");
-    if (needToken) {
-        let token = localStorage.getItem("token");
-        if (token != null) {
-            aHeaders.append("Authorization", `${"Bearer " + token}`);
-        } else {
-            throw "No se pudo obtener el token";
-        }
-    }
+    // if (needToken) {
+    //     let token = localStorage.getItem("token");
+    //     if (token != null) {
+    //         aHeaders.append("Authorization", `${"Bearer " + token}`);
+    //     } else {
+    //         throw "No se pudo obtener el token";
+    //     }
+    // }
     const response = await fetch(url, {
         method: "DELETE",
         mode: "cors",
@@ -109,21 +111,33 @@ export const putDocument = async function (url = "", formData = null) {
     return response.json();
 };
 
-export const putFormData = async function (url = "", formData = null) {
-    url = APP_HOST + url;
-    const response = await fetch(url, {
-        method: "POST",
-        body: formData,
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "same-origin",
-        headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        redirect: "follow",
-        referrerPolicy: "no-referrer",
-    });
-    return response.json();
+// para subir archivos a s3
+export const postFormData = async function (url = "", formData = null) {
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            body: formData,
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+        });
+        if (response.status === 204) {
+            return { 'status': 204, message: "Archivo subido correctamente" };
+        }
+
+        const errorText = await response.text();
+        const errorJson = convertXML(errorText);
+        console.error("❌ Error en la subida:", errorJson, Error.message);
+        return { status: 400, message: `Error subiendo archivo ${errorJson, Error.message}` };
+
+    } catch (error) {
+        console.error("❌ Error en la subida:", errorJson, Error.message);
+        return { status: 400, message: "Error subiendo el archivo" };
+
+    }
 };
 
 export const putData = async function (url = "", data = {}) {
@@ -135,7 +149,7 @@ export const putData = async function (url = "", data = {}) {
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            // Authorization: "Bearer " + localStorage.getItem("token"),
         },
         redirect: "follow",
         referrerPolicy: "no-referrer",
