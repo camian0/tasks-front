@@ -149,7 +149,7 @@ export const putData = async function (url = "", data = {}) {
         credentials: "same-origin",
         headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            // Authorization: "Bearer " + localStorage.getItem("token"),
         },
         redirect: "follow",
         referrerPolicy: "no-referrer",
