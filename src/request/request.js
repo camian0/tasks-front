@@ -125,7 +125,7 @@ export const postFormData = async function (url = "", formData = null) {
             referrerPolicy: "no-referrer",
         });
         if (response.status === 204) {
-            return { message: "Archivo subido correctamente" };
+            return { 'status': 204, message: "Archivo subido correctamente" };
         }
 
         const errorText = await response.text();
