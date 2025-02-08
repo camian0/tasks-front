@@ -24,7 +24,7 @@
           <td>
             <button @click="handleUpdateTask(task)">Actualizar</button>
             <button @click="sendOneTask(task)">listar1</button>
-            , eliminar
+            <button @click="handleDeleteTask(task.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -38,7 +38,7 @@ import { getData } from "../../request/request";
 
 export default {
   name: "ListTask",
-  emits: ["oneTask", "updateTask"], // Declara el evento aquí
+  emits: ["oneTask", "updateTask", "deleteTask"], // Declara el evento aquí
   data() {
     return {
       listTask: [],
@@ -76,6 +76,11 @@ export default {
 
     handleUpdateTask(event) {
       this.$emit("updateTask", event);
+    },
+
+    handleDeleteTask(id) {
+      console.log("Tarea para eliminar recibida con id", id);
+      this.$emit("deleteTask", id);
     },
   },
 };
