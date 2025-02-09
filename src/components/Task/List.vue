@@ -6,7 +6,7 @@
       :data="listTask"
       empty-text="No hay tareas para mostrar"
       stripe
-      style="width: 100%"
+      style="width: 98%"
     >
       <el-table-column prop="id" label="id" :min-width="20" />
       <el-table-column prop="task_name" label="Nombre de la tarea" :min-width="100" />
@@ -27,7 +27,10 @@
       <el-table-column prop="file_name" label="Nombre del archivo" />
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
-          <el-icon><Plus /></el-icon>
+          <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
+          <!-- <el-icon><Tickets /></el-icon> -->
+          <!-- // <el-icon @click="sendOneTask(task)"><Plus /></el-icon> -->
+          <!-- <button @click="sendOneTask(task)">listar1</button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -65,6 +68,7 @@
 
 <script>
 import { getData } from "../../request/request";
+import { TASK_STATUS } from "@/config/constants";
 import { ref } from "vue";
 export default {
   name: "ListTask",
@@ -126,7 +130,7 @@ export default {
 
     formatStatusStask(row, column, cellValue) {
       cellValue = cellValue.toUpperCase();
-      return this.taskStatus[cellValue];
+      return TASK_STATUS[cellValue];
     },
 
     sendOneTask(event) {
@@ -145,7 +149,11 @@ export default {
 </script>
 
 <style scoped>
-table {
-  border: 2px solid black;
+.el-table__inner-wrapper {
+  font-size: 16px;
+}
+i {
+  font-size: 20px;
+  cursor: pointer;
 }
 </style>
