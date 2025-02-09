@@ -27,6 +27,7 @@
       <el-table-column prop="file_name" label="Nombre del archivo" />
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
+          <el-icon @click="seeFile(scope.row.file_name)"><View /></el-icon>
           <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
           <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
           <el-icon @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import { getData } from "../../request/request";
+import { getData, downloadData } from "../../request/request";
 import { TASK_STATUS } from "@/config/constants";
 import { ref } from "vue";
 export default {
@@ -113,6 +114,12 @@ export default {
 
     handleDeleteTask(id) {
       this.$emit("deleteTask", id);
+    },
+
+    async seeFile(idFile) {
+      console.log("link url", idFile);
+      let response = await downloadData(`file/${idFile}`);
+      console.log(response);
     },
   },
 };
