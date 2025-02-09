@@ -4,7 +4,7 @@
     <CreateTask />
     <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
     <DetailedTask :task="taskToSend" />
-    <!-- <UpdateTask :task="taskToSend" /> -->
+    <UpdateTask :task="taskToSend" />
     <DeleteTask :id="idToDelete" />
   </div>
 </template>

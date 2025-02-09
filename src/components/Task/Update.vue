@@ -1,6 +1,66 @@
 <template>
   <div>
-    <p>Bienvenido al componente actualizar tarea</p>
+    <el-dialog v-model="centerDialogVisible" title="Crear Tarea" width="500" center>
+      <span class="content">
+        <el-form
+          ref="formRef"
+          style="max-width: 600px"
+          :model="model"
+          :rules="rules"
+          label-width="auto"
+          class="demo-ruleForm"
+          status-icon
+        >
+          <el-form-item label="Nombre de la tarea" prop="task_name">
+            <el-input v-model="model.task_name" />
+          </el-form-item>
+
+          <el-form-item label="Correo" prop="email">
+            <el-input v-model="model.email" />
+          </el-form-item>
+
+          <el-form-item label="Estado de la tarea" prop="task_state">
+            <el-select v-model="model.task_state" placeholder="Selecciona un estado">
+              <el-option label="Por Hacer" value="TO DO" />
+              <el-option label="En proceso" value="PROCESS" />
+              <el-option label="Finalizada" value="FINISHED" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="Fecha de finalizacion" required>
+            <el-form-item prop="finish_date">
+              <el-date-picker
+                v-model="model.finish_date"
+                type="datetime"
+                placeholder="Escoje una fecha"
+                format="YYYY-MM-DD hh:mm"
+                date-format="DD MMM, YYYY"
+                time-format="hh:mm a"
+              />
+            </el-form-item>
+          </el-form-item>
+
+          <!-- para subir archivo -->
+          <el-upload class="upload-demo" :on-change="handleChange" :limit="1" :auto-upload="false">
+            <el-button type="primary">Subir archivo</el-button>
+          </el-upload>
+
+          <el-form-item style="text-align: center">
+            <el-button type="primary" @click="getUrl(ruleFormRef)"> Crear Tarea </el-button>
+            <el-button @click="resetForm(ruleFormRef)">Limpiar formulario</el-button>
+            <el-button @click="closeForm()">Cancelar</el-button>
+          </el-form-item>
+        </el-form>
+      </span>
+      <!-- <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="centerDialogVisible = false"> Guardar </el-button>
+        <el-button @click="centerDialogVisible = false">Cerrar</el-button>
+      </div>
+    </template> -->
+    </el-dialog>
+
+    <!-- <p>Bienvenido al componente actualizar tarea</p>
     <input type="text" v-model="model.task_name" placeholder="Nombre de la tarea" />
     <br />
     <input type="email" v-model="model.email" placeholder="Correo" />
@@ -14,7 +74,7 @@
     </select>
     <br />
 
-    <button @click="updateTask">Actualizar tarea</button>
+    <button @click="updateTask">Actualizar tarea</button> -->
   </div>
 </template>
 
