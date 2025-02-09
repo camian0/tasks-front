@@ -1,8 +1,8 @@
 <template>
   <div>
     <p>Bienvenido a la vista de tareas</p>
+    <CreateTask />
     <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
-    <!-- <CreateTask /> -->
     <DetailedTask :task="taskToSend" />
     <!-- <UpdateTask :task="taskToSend" /> -->
     <DeleteTask :id="idToDelete" />

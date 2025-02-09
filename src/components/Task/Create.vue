@@ -6,7 +6,7 @@ v
   <el-dialog v-model="centerDialogVisible" title="Crear Tarea" width="500" center>
     <span class="content">
       <el-form
-        ref="ruleFormRef"
+        ref="formRef"
         style="max-width: 600px"
         :model="model"
         :rules="rules"
@@ -45,12 +45,13 @@ v
 
         <!-- para subir archivo -->
         <el-upload class="upload-demo" :on-change="handleChange" :limit="1" :auto-upload="false">
-          <el-button type="primary">Subir</el-button>
+          <el-button type="primary">Subir archivo</el-button>
         </el-upload>
 
         <el-form-item style="text-align: center">
-          <el-button type="primary" @click="getUrl(ruleFormRef)"> Create </el-button>
-          <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+          <el-button type="primary" @click="getUrl(ruleFormRef)"> Crear Tarea </el-button>
+          <el-button @click="resetForm(ruleFormRef)">Limpiar formulario</el-button>
+          <el-button @click="closeForm()">Cancelar</el-button>
         </el-form-item>
       </el-form>
     </span>
@@ -66,11 +67,13 @@ v
 <script>
 import { postData, postFormData } from "../../request/request";
 import { ref, reactive } from "vue";
+import { ElLoading } from "element-plus";
 
 export default {
   name: "CreateTask",
   setup() {
     const centerDialogVisible = ref(false);
+
     return {
       centerDialogVisible,
     };
@@ -117,54 +120,77 @@ export default {
           },
         ],
       },
+      loadingPage: null,
     };
   },
   methods: {
     resetForm() {
-      this.$refs.ruleFormRef.resetFields();
+      this.$refs.formRef.resetFields();
     },
     async getUrl() {
       console.log("Creando tarea");
       console.log("modelo ", this.model);
       console.log("fecha del modelo", this.model.finish_date);
-      const modelSent = this.createObjectSent(this.model);
+      let modelSent = this.createObjectSent(this.model);
+      let hashFile = modelSent.file !== "" ? this.getHashNameFile() + modelSent.file.name : "";
+      modelSent.file_name = hashFile;
 
-      console.log("modelo a enviar", modelSent);
-
-      // validar formulario
-      this.$refs.ruleFormRef.validate(async (valid) => {
-        // si el formulario de válido se sigue con la petición
-        if (valid) {
-          // comprobamos que se haya seleccionado un archivo
-          console.log("formulario válido");
-          if (this.model.file !== "" && this.model.file !== undefined) {
-            // peticion para obtener url firmada
-            let response = await postData(`file/${hashFile}`);
-            console.log("response", response);
+      this.$refs.formRef.validate((valid) => {
+        if (!valid) {
+          console.log("❌  Formulario invalido:", this.model);
+          return false;
+        }
+      });
+      // comprobamos que se haya seleccionado un archivo
+      console.log("formulario válido");
+      if (this.model.file !== "" && this.model.file !== undefined) {
+        this.loadingPage = ElLoading.service();
+        // peticion para obtener url firmada
+        let response = await postData(`file/${hashFile}`);
+        console.log("response", response);
+        if (response.status === 200) {
+          // creamos un form data con la informacion recibida para firmar url de amazon y subir el archivo a s3
+          this.urlUploadFile = response.data.url;
+          let formData = new FormData();
+          Object.entries(response.data.fields).forEach(([key, value]) => {
+            formData.append(key, value);
+          });
+          formData.append("file", modelSent.file);
+          response = await this.createFile(formData, this.urlUploadFile);
+          if (response.status == 204) {
+            ElNotification({
+              title: "Exito",
+              message: "Archivo creado correctamente",
+              type: "success",
+            });
+            // peticion para crear la tarea
+            response = await this.createTask(modelSent);
             if (response.status === 200) {
-              // creamos un form data con la informacion recibida para firmar url de amazon y subir el archivo a s3
-              this.urlUploadFile = response.data.url;
-              let formData = new FormData();
-              Object.entries(response.data.fields).forEach(([key, value]) => {
-                formData.append(key, value);
+              ElNotification({
+                title: "Exito",
+                message: response.data.message,
+                type: "success",
               });
-              formData.append("file", this.model.file);
-              response = await this.createFile(formData, this.urlUploadFile);
-              if (response.status == 204) {
-                // peticion para crear la tarea
-                await this.createTask(modelSent);
-              }
-              return;
             }
-            // mensaje para el error
-            console.log(response.data.message);
           }
-
+          this.closeForm();
+          this.loadingPage.close();
           return;
         }
-
-        return false;
+        ElNotification({
+          title: "Error",
+          message: response.data.message,
+          type: "error",
+        });
+      }
+      ElNotification({
+        title: "Archivo",
+        message: "Selecciona una archivo para subir",
+        type: "info",
       });
+      if (this.loadingPage) {
+        this.loadingPage.close();
+      }
     },
 
     async createFile(formData, signedUrl) {
@@ -178,12 +204,7 @@ export default {
     async createTask(modelSent) {
       console.log("tarea para guardar completa", modelSent);
       let response = await postData("tasks", modelSent);
-      if (response.status === 200) {
-        console.log(response.data.message);
-
-        return;
-      }
-      console.log(response.data.message);
+      return response;
     },
 
     // manejar el archivo que se sube y se guarda al modelo
@@ -203,14 +224,11 @@ export default {
       let modelSent = { ...task };
       modelSent.finish_date = this.processDate(this.model.finish_date);
       modelSent.task_state = modelSent.task_state.toUpperCase();
-      let hashFile = this.getHashNameFile() + modelSent.file.name;
-      modelSent.file_name = hashFile;
-
       return modelSent;
     },
 
     processDate(date) {
-      if (!(date instanceof Date)) {
+      if (!(date instanceof Date) && date !== undefined) {
         throw new Error("El parámetro debe ser un objeto Date válido");
       }
 
@@ -230,9 +248,14 @@ export default {
         task_name: "",
         email: "",
         finish_date: "",
-        task_state: "to do",
+        task_state: "TO DO",
         file: "",
       };
+    },
+
+    closeForm() {
+      this.centerDialogVisible = false;
+      this.cleanModel();
     },
   },
 };
