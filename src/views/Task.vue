@@ -2,8 +2,8 @@
   <div>
     <p>Bienvenido a la vista de tareas</p>
     <CreateTask />
-    <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
-    <DetailedTask :task="taskToSend" />
+    <ListTask @one-task="toDetails" @update-task="toUpdate" @delete-task="taskToDelete" />
+    <DetailedTask :task="taskToDetail" />
     <UpdateTask :task="taskToUpdate" />
     <DeleteTask :id="idToDelete" />
   </div>
@@ -26,13 +26,16 @@ export default {
   },
   data() {
     return {
-      taskToSend: {},
+      taskToDetail: {},
       idToDelete: 0,
       taskToUpdate: {},
     };
   },
   methods: {
-    receivedTask(eventReceived) {
+    toDetails(eventReceived) {
+      this.taskToDetail = { ...eventReceived };
+    },
+    toUpdate(eventReceived) {
       this.taskToUpdate = { ...eventReceived };
     },
 
