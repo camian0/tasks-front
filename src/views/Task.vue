@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       taskToSend: {},
-      idToDelete: -5,
+      idToDelete: 0,
       taskToUpdate: {},
     };
   },
