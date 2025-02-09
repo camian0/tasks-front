@@ -1,10 +1,10 @@
 <template>
   <div>
     <p>Bienvenido a la vista de tareas</p>
+    <CreateTask />
     <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
-    <!-- <CreateTask /> -->
-    <!-- <DetailedTask :task="taskToSend" /> -->
-    <!-- <UpdateTask :task="taskToSend" /> -->
+    <DetailedTask :task="taskToSend" />
+    <UpdateTask :task="taskToUpdate" />
     <DeleteTask :id="idToDelete" />
   </div>
 </template>
@@ -27,12 +27,13 @@ export default {
   data() {
     return {
       taskToSend: {},
-      idToDelete: -5,
+      idToDelete: 0,
+      taskToUpdate: {},
     };
   },
   methods: {
     receivedTask(eventReceived) {
-      this.taskToSend = { ...eventReceived };
+      this.taskToUpdate = { ...eventReceived };
     },
 
     taskToDelete(idReceived) {
