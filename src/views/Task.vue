@@ -3,7 +3,7 @@
     <p>Bienvenido a la vista de tareas</p>
     <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
     <!-- <CreateTask /> -->
-    <!-- <DetailedTask :task="taskToSend" /> -->
+    <DetailedTask :task="taskToSend" />
     <!-- <UpdateTask :task="taskToSend" /> -->
     <DeleteTask :id="idToDelete" />
   </div>
