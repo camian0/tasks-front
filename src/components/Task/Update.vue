@@ -147,9 +147,8 @@ export default {
     async updateTask() {
       let modelSent = { ...this.model };
       modelSent.finish_date = this.processDate(this.model.finish_date);
-      console.log("datos a actuaizar: ", modelSent);
-      // validamos el formulario
 
+      // validamos el formulario
       this.$refs.formRef.validate((valid) => {
         if (!valid) {
           console.log("❌  Formulario invalido:", this.model);
@@ -159,7 +158,6 @@ export default {
 
       this.loadingPage = ElLoading.service();
       let response = await putData(`tasks/${modelSent.id}`, modelSent);
-      console.log(response);
       if (response.status === 200) {
         ElNotification({
           title: "Exito",
