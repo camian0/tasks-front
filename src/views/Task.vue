@@ -4,7 +4,7 @@
     <CreateTask />
     <ListTask @one-task="receivedTask" @update-task="receivedTask" @delete-task="taskToDelete" />
     <DetailedTask :task="taskToSend" />
-    <UpdateTask :task="taskToSend" />
+    <UpdateTask :task="taskToUpdate" />
     <DeleteTask :id="idToDelete" />
   </div>
 </template>
@@ -28,11 +28,12 @@ export default {
     return {
       taskToSend: {},
       idToDelete: -5,
+      taskToUpdate: {},
     };
   },
   methods: {
     receivedTask(eventReceived) {
-      this.taskToSend = { ...eventReceived };
+      this.taskToUpdate = { ...eventReceived };
     },
 
     taskToDelete(idReceived) {
