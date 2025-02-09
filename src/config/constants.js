@@ -7,3 +7,9 @@ export function convertXML(xmlResponse) {
     const jsonResult = parser.parse(xmlResponse);
     return jsonResult
 }
+
+export const TASK_STATUS = {
+    "TO DO": "PENDIENTE",
+    PROCESS: "EN PROCESO",
+    FINISHED: "FINALIZADO",
+}
