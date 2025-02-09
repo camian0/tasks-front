@@ -8,7 +8,7 @@
       stripe
       style="width: 98%"
     >
-      <el-table-column prop="id" label="id" :min-width="20" />
+      <el-table-column prop="id" label="id" :min-width="40" />
       <el-table-column prop="task_name" label="Nombre de la tarea" :min-width="100" />
       <el-table-column prop="email" label="Correo" :min-width="120" />
       <el-table-column
