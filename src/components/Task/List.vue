@@ -29,42 +29,10 @@
         <template #default="scope">
           <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
           <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
-          <!-- <el-icon><Delete /></el-icon> -->
-          <!-- <el-icon><Tickets /></el-icon> -->
-          <!-- // <el-icon @click="sendOneTask(task)"><Plus /></el-icon> -->
-          <!-- <button @click="sendOneTask(task)">listar1</button> -->
+          <el-icon @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
         </template>
       </el-table-column>
     </el-table>
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>nombre tarea</th>
-          <th>correo</th>
-          <th>Fecha finalizacion</th>
-          <th>Estado</th>
-          <th>Nombre archivos</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody v-if="this.listTask.length > 0">
-        <tr v-for="task in listTask" :key="task.id">
-          <td>{{ task.id }}</td>
-          <td>{{ task.task_name }}</td>
-          <td>{{ task.email }}</td>
-          <td>{{ formatDate(task.finish_date) }}</td>
-          <td>{{ task.task_state }}</td>
-          <td>{{ task.file_name }}</td>
-          <td>
-            <button @click="handleUpdateTask(task)">Actualizar</button>
-            <button @click="sendOneTask(task)">listar1</button>
-            <button @click="handleDeleteTask(task.id)">Eliminar</button>
-             TODO: falta el de ver archivo
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
   </div>
 </template>
 
