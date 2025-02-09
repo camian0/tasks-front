@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog v-model="centerDialogVisible" title="Crear Tarea" width="500" center>
+    <el-dialog v-model="modalUpdateShow" title="Actualizar Tarea" width="500" center>
       <span class="content">
         <el-form
           ref="formRef"
@@ -39,25 +39,15 @@
               />
             </el-form-item>
           </el-form-item>
-
-          <!-- para subir archivo -->
-          <el-upload class="upload-demo" :on-change="handleChange" :limit="1" :auto-upload="false">
-            <el-button type="primary">Subir archivo</el-button>
-          </el-upload>
-
           <el-form-item style="text-align: center">
-            <el-button type="primary" @click="getUrl(ruleFormRef)"> Crear Tarea </el-button>
+            <el-button type="primary" @click="updateTask(ruleFormRef)">
+              Actualizar Tarea
+            </el-button>
             <el-button @click="resetForm(ruleFormRef)">Limpiar formulario</el-button>
             <el-button @click="closeForm()">Cancelar</el-button>
           </el-form-item>
         </el-form>
       </span>
-      <!-- <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="centerDialogVisible = false"> Guardar </el-button>
-        <el-button @click="centerDialogVisible = false">Cerrar</el-button>
-      </div>
-    </template> -->
     </el-dialog>
 
     <!-- <p>Bienvenido al componente actualizar tarea</p>
@@ -80,8 +70,17 @@
 
 <script>
 import { putData } from "../../request/request";
+import { ref } from "vue";
+import { ElLoading } from "element-plus";
+
 export default {
   name: "UpdateTask",
+  setup() {
+    const modalUpdateShow = ref(false);
+    return {
+      modalUpdateShow,
+    };
+  },
   props: {
     task: {
       type: Object,
@@ -92,6 +91,8 @@ export default {
   watch: {
     task(newValue, oldValue) {
       this.createTask(newValue);
+      console.log("modelo para actualziar ", this.model);
+      this.modalUpdateShow = true;
     },
   },
   data() {
@@ -103,22 +104,82 @@ export default {
         finish_date: "",
         task_state: "",
       },
+      rules: {
+        task_name: [
+          { required: true, message: "Por favor ingresa un nombre para la tarea", trigger: "blur" },
+        ],
+        email: [
+          {
+            required: true,
+            message: "Por favor ingresa un correo electronico",
+            trigger: "blur",
+          },
+          {
+            type: "email",
+            message: "Por favor ingresa un correo electronico válido",
+            trigger: ["blur", "change"],
+          },
+        ],
+        finish_date: [
+          {
+            type: "date",
+            required: true,
+            message: "Por favor escoje una fecha",
+            trigger: "change",
+          },
+        ],
+        task_state: [
+          {
+            required: true,
+            message: "Por favor selecciona un estado para la tarea",
+            trigger: "blur",
+          },
+        ],
+      },
+      loadingPage: null,
     };
   },
 
   methods: {
+    resetForm() {
+      this.$refs.formRef.resetFields();
+    },
     async updateTask() {
       let modelSent = { ...this.model };
       modelSent.finish_date = this.processDate(this.model.finish_date);
       console.log("datos a actuaizar: ", modelSent);
+      // validamos el formulario
 
+      this.$refs.formRef.validate((valid) => {
+        if (!valid) {
+          console.log("❌  Formulario invalido:", this.model);
+          return false;
+        }
+      });
+
+      this.loadingPage = ElLoading.service();
       let response = await putData(`tasks/${modelSent.id}`, modelSent);
+      console.log(response);
       if (response.status === 200) {
-        console.log(response.message);
+        ElNotification({
+          title: "Exito",
+          message: response.data.message,
+          type: "success",
+        });
+        this.closeForm();
+        this.loadingPage.close();
         return;
       }
+      ElNotification({
+        title: "Error",
+        message: response.data.message,
+        type: "error",
+      });
 
-      this.cleanModel();
+      if (this.loadingPage) {
+        this.loadingPage.close();
+      }
+      this.closeForm();
     },
 
     createTask(modelSent) {
@@ -165,6 +226,11 @@ export default {
         finish_date: "",
         task_state: "",
       };
+    },
+
+    closeForm() {
+      this.modalUpdateShow = false;
+      this.cleanModel();
     },
   },
 };
