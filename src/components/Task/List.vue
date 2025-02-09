@@ -28,6 +28,8 @@
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
           <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
+          <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
+          <!-- <el-icon><Delete /></el-icon> -->
           <!-- <el-icon><Tickets /></el-icon> -->
           <!-- // <el-icon @click="sendOneTask(task)"><Plus /></el-icon> -->
           <!-- <button @click="sendOneTask(task)">listar1</button> -->
@@ -153,6 +155,7 @@ export default {
   font-size: 16px;
 }
 i {
+  margin: 2px 4px;
   font-size: 20px;
   cursor: pointer;
 }
