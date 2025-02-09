@@ -55,6 +55,7 @@
             <button @click="handleUpdateTask(task)">Actualizar</button>
             <button @click="sendOneTask(task)">listar1</button>
             <button @click="handleDeleteTask(task.id)">Eliminar</button>
+             TODO: falta el de ver archivo
           </td>
         </tr>
       </tbody>
