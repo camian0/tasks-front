@@ -1,6 +1,36 @@
 <template>
   <div>
-    <p>Listar tareas</p>
+    <section class="search-header">
+      <el-select
+        v-model="selectedSearch"
+        placeholder="Selecciona un campo"
+        size="large"
+        style="width: 240px"
+      >
+        <el-option v-for="(key, value) in toSearch" :key="key" :label="key" :value="value" />
+      </el-select>
+      <el-input
+        v-model="fieldSearch"
+        placeholder="Buscar tarea"
+        style="width: 65%; height: 34px; margin-right: 10px"
+      />
+
+      <section class="buttons">
+        <el-button disabled @click="previousPage"
+          ><el-icon id="previous-btn"><ArrowLeftBold /></el-icon
+        ></el-button>
+
+        <!-- <button disabled>
+          <el-icon id="previous-btn" @click="previousPage"><ArrowLeftBold /></el-icon>
+        </button> -->
+
+        <span id="page-number">{{ numberPage }}</span>
+        <button :disabled="desactivateNext">
+          <el-icon id="next-btn" @click="nextPage"><ArrowRightBold /></el-icon>
+        </button>
+      </section>
+    </section>
+
     <el-table
       v-loading="loadingTable"
       :data="listTask"
@@ -59,18 +89,31 @@ export default {
         PROCESS: "EN PROCESO",
         FINISHED: "FINALIZADO",
       },
+      numberPage: 0,
+      toSearch: {
+        email: "Correo",
+        task_state: "Estado de la tarea",
+        finish_date: "Fecha finalizacion",
+      },
+      lastEvaluatedKey: {},
+      selectedSearch: "",
+      fieldSearch: "",
+      desactivatePrevious: true,
+      desactivateNext: false,
     };
   },
   mounted() {
     this.getTask();
   },
   methods: {
-    async getTask() {
+    async getTask(params = {}) {
       this.loadingTable = true;
-      let response = await getData("tasks");
+      let response = await getData("tasks", params);
       if (response.status === 200) {
         this.listTask = response.data.items;
+        this.lastEvaluatedKey = response.data.lastEvaluatedKey;
         this.loadingTable = false;
+        console.log(this.lastEvaluatedKey);
         ElNotification({
           title: "Exito",
           message: response.data.message,
@@ -121,6 +164,22 @@ export default {
       let response = await downloadData(`file/${idFile}`);
       console.log(response);
     },
+
+    previousPage() {
+      if (this.numberPage < 0) {
+        this.numberPage--;
+      }
+
+      console.log("click previous");
+    },
+
+    async nextPage() {
+      if (this.lastEvaluatedKey) {
+        console.log("click next");
+        this.numberPage++;
+        // await getData("tasks", { exclusiveStartKey: this.lastEvaluatedKey });
+      }
+    },
   },
 };
 </script>
@@ -133,5 +192,40 @@ i {
   margin: 2px 4px;
   font-size: 20px;
   cursor: pointer;
+}
+
+.search-header {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0px;
+}
+
+.el-select {
+  margin-right: 10px;
+}
+
+.buttons {
+  padding: 0px;
+}
+.buttons > button {
+  border: none;
+  padding: 5px;
+  background-color: rgb(21, 101, 192);
+  color: white;
+}
+
+.buttons > button:hover {
+  background-color: #90caf9;
+  color: white;
+}
+
+.buttons > i {
+  font-size: 17px;
+}
+
+#page-number {
+  margin: 0 12px;
+  padding: 5px;
+  font-size: 22px;
 }
 </style>
