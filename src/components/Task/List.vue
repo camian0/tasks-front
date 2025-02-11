@@ -1,5 +1,6 @@
 <template>
   <div>
+    <<<<<<< HEAD
     <section class="search-header">
       <el-select
         v-model="selectedSearch"
@@ -28,6 +29,9 @@
       </section>
     </section>
 
+    =======
+    <p>Listar tareas</p>
+    >>>>>>> 24981209407e4615df066506fb6434bba508103e
     <el-table
       v-loading="loadingTable"
       :data="listTask"
@@ -54,10 +58,16 @@
       <el-table-column prop="file_name" label="Nombre del archivo" />
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
+          <<<<<<< HEAD
           <el-icon id="see-icon" @click="seeFile(scope.row.file_name)"><View /></el-icon>
           <el-icon id="details-icon" @click="sendOneTask(scope.row)"><Tickets /></el-icon>
           <el-icon id="edit-icon" @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
           <el-icon id="delete-icon" @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
+          =======
+          <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
+          <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
+          <el-icon @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
+          >>>>>>> 24981209407e4615df066506fb6434bba508103e
         </template>
       </el-table-column>
     </el-table>

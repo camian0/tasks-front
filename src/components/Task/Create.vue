@@ -61,7 +61,6 @@ v
         <el-button @click="centerDialogVisible = false">Cerrar</el-button>
       </div>
     </template> -->
-    <!-- <input type="file" v-on:change="handlerFile" /> -->
   </el-dialog>
 </template>
 
