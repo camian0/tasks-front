@@ -57,25 +57,44 @@ export const deleteRequest = async function (url = "", needToken) {
 };
 
 export const getData = async function (url = "", params = {}) {
-    url = APP_HOST + url;
-    // Verificamos que hay params para enviarlos en la petición
-    if (Object.keys(params).length > 0) {
-        url += "?" + new URLSearchParams(params).toString();
+    try {
+        url = APP_HOST + url;
+        // Verificamos que hay params para enviarlos en la petición    
+        console.log("params request", params);
+        if (Object.keys(params).length > 0) {
+            console.log("dentro revisar params")
+            // Convertimos objetos a JSON antes de construir la URL
+            // const formattedParams = Object.fromEntries(
+            //     Object.entries(params).map(([key, value]) => [
+            //         key,
+            //         typeof value === "object" ? JSON.stringify(value) : value
+            //     ])
+            // );
+            let jsonString = JSON.stringify(params)
+            // const encodedJsonString = encodeURIComponent(jsonString);
+
+            url += "?" + jsonString;
+        }
+        console.log("en la reques", url);
+        const response = await fetch(url, {
+            method: "GET",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                // Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+        });
+        const dataResponse = await response.json();
+        return { status: response.status, "data": dataResponse };
+    } catch (error) {
+        console.error("❌ Error en la subida:", error, Error.message);
+        return { status: 400, message: "Error subiendo el archivo" };
     }
-    const response = await fetch(url, {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/json",
-            // Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        redirect: "follow",
-        referrerPolicy: "no-referrer",
-    });
-    const dataResponse = await response.json();
-    return { status: response.status, "data": dataResponse };
+
 };
 
 export const getRawData = async function (url = "") {

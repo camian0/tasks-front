@@ -16,18 +16,15 @@
       />
 
       <section class="buttons">
-        <el-button disabled @click="previousPage"
+        <el-button :disabled="desactivatePrevious" @click="previousPage"
           ><el-icon id="previous-btn"><ArrowLeftBold /></el-icon
         ></el-button>
 
-        <!-- <button disabled>
-          <el-icon id="previous-btn" @click="previousPage"><ArrowLeftBold /></el-icon>
-        </button> -->
-
         <span id="page-number">{{ numberPage }}</span>
-        <button :disabled="desactivateNext">
-          <el-icon id="next-btn" @click="nextPage"><ArrowRightBold /></el-icon>
-        </button>
+
+        <el-button :disabled="desactivateNext" @click="nextPage">
+          <el-icon id="next-btn"><ArrowRightBold /></el-icon>
+        </el-button>
       </section>
     </section>
 
@@ -57,10 +54,10 @@
       <el-table-column prop="file_name" label="Nombre del archivo" />
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
-          <el-icon @click="seeFile(scope.row.file_name)"><View /></el-icon>
-          <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
-          <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
-          <el-icon @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
+          <el-icon id="see-icon" @click="seeFile(scope.row.file_name)"><View /></el-icon>
+          <el-icon id="details-icon" @click="sendOneTask(scope.row)"><Tickets /></el-icon>
+          <el-icon id="edit-icon" @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
+          <el-icon id="delete-icon" @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
         </template>
       </el-table-column>
     </el-table>
@@ -99,11 +96,15 @@ export default {
       selectedSearch: "",
       fieldSearch: "",
       desactivatePrevious: true,
-      desactivateNext: false,
+      desactivateNext: true,
     };
   },
   mounted() {
     this.getTask();
+    this.desactivatePrevious =
+      this.numberPage <= 0 ? this.desactivatePrevious : !this.desactivatePrevious;
+    this.desactivateNext =
+      Object.keys(this.lastEvaluatedKey).length > 0 ? this.desactivateNext : !this.desactivateNext;
   },
   methods: {
     async getTask(params = {}) {
@@ -166,18 +167,28 @@ export default {
     },
 
     previousPage() {
+      console.log(this.desactivatePrevious);
+      if (this.numberPage <= 0) {
+        this.desactivatePrevious = !this.desactivatePrevious;
+      }
       if (this.numberPage < 0) {
         this.numberPage--;
       }
 
+      console.log(this.desactivatePrevious);
       console.log("click previous");
     },
 
     async nextPage() {
-      if (this.lastEvaluatedKey) {
+      console.log(Object.keys(this.lastEvaluatedKey).length > 0);
+      if (!this.lastEvaluatedKey) {
+        this.desactivateNext = !this.desactivateNext;
+      }
+      if (Object.keys(this.lastEvaluatedKey).length > 0) {
         console.log("click next");
         this.numberPage++;
-        // await getData("tasks", { exclusiveStartKey: this.lastEvaluatedKey });
+
+        this.getTask(JSON.stringify({ exclusiveStartKey: this.lastEvaluatedKey }));
       }
     },
   },
@@ -191,9 +202,11 @@ export default {
 i {
   margin: 2px 4px;
   font-size: 20px;
-  cursor: pointer;
 }
 
+table tr td i {
+  cursor: pointer;
+}
 .search-header {
   display: flex;
   flex-direction: row;
@@ -227,5 +240,21 @@ i {
   margin: 0 12px;
   padding: 5px;
   font-size: 22px;
+}
+
+#see-icon {
+  color: black;
+}
+
+#details-icon {
+  color: #2a8dc9;
+}
+
+#edit-icon {
+  color: rgb(5, 175, 47);
+}
+
+#delete-icon {
+  color: red;
 }
 </style>

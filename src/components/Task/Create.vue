@@ -61,6 +61,7 @@ v
         <el-button @click="centerDialogVisible = false">Cerrar</el-button>
       </div>
     </template> -->
+    <!-- <input type="file" v-on:change="handlerFile" /> -->
   </el-dialog>
 </template>
 
@@ -155,7 +156,7 @@ export default {
           Object.entries(response.data.fields).forEach(([key, value]) => {
             formData.append(key, value);
           });
-          formData.append("file", modelSent.file);
+          formData.append("file", modelSent.file.raw);
           response = await this.createFile(formData, this.urlUploadFile);
           if (response.status == 204) {
             ElNotification({
