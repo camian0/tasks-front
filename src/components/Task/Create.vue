@@ -155,7 +155,7 @@ export default {
           Object.entries(response.data.fields).forEach(([key, value]) => {
             formData.append(key, value);
           });
-          formData.append("file", modelSent.file);
+          formData.append("file", modelSent.file.raw);
           response = await this.createFile(formData, this.urlUploadFile);
           if (response.status == 204) {
             ElNotification({

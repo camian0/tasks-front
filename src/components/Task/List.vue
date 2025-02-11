@@ -1,6 +1,37 @@
 <template>
   <div>
+    <<<<<<< HEAD
+    <section class="search-header">
+      <el-select
+        v-model="selectedSearch"
+        placeholder="Selecciona un campo"
+        size="large"
+        style="width: 240px"
+      >
+        <el-option v-for="(key, value) in toSearch" :key="key" :label="key" :value="value" />
+      </el-select>
+      <el-input
+        v-model="fieldSearch"
+        placeholder="Buscar tarea"
+        style="width: 65%; height: 34px; margin-right: 10px"
+      />
+
+      <section class="buttons">
+        <el-button :disabled="desactivatePrevious" @click="previousPage"
+          ><el-icon id="previous-btn"><ArrowLeftBold /></el-icon
+        ></el-button>
+
+        <span id="page-number">{{ numberPage }}</span>
+
+        <el-button :disabled="desactivateNext" @click="nextPage">
+          <el-icon id="next-btn"><ArrowRightBold /></el-icon>
+        </el-button>
+      </section>
+    </section>
+
+    =======
     <p>Listar tareas</p>
+    >>>>>>> 24981209407e4615df066506fb6434bba508103e
     <el-table
       v-loading="loadingTable"
       :data="listTask"
@@ -27,9 +58,16 @@
       <el-table-column prop="file_name" label="Nombre del archivo" />
       <el-table-column label="Acciones" align="center" width="160">
         <template #default="scope">
+          <<<<<<< HEAD
+          <el-icon id="see-icon" @click="seeFile(scope.row.file_name)"><View /></el-icon>
+          <el-icon id="details-icon" @click="sendOneTask(scope.row)"><Tickets /></el-icon>
+          <el-icon id="edit-icon" @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
+          <el-icon id="delete-icon" @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
+          =======
           <el-icon @click="sendOneTask(scope.row)"><Tickets /></el-icon>
           <el-icon @click="handleUpdateTask(scope.row)"><EditPen /></el-icon>
           <el-icon @click="handleDeleteTask(scope.row.id)"><CloseBold /></el-icon>
+          >>>>>>> 24981209407e4615df066506fb6434bba508103e
         </template>
       </el-table-column>
     </el-table>
@@ -37,7 +75,7 @@
 </template>
 
 <script>
-import { getData } from "../../request/request";
+import { getData, downloadData } from "../../request/request";
 import { TASK_STATUS } from "@/config/constants";
 import { ref } from "vue";
 export default {
@@ -58,18 +96,35 @@ export default {
         PROCESS: "EN PROCESO",
         FINISHED: "FINALIZADO",
       },
+      numberPage: 0,
+      toSearch: {
+        email: "Correo",
+        task_state: "Estado de la tarea",
+        finish_date: "Fecha finalizacion",
+      },
+      lastEvaluatedKey: {},
+      selectedSearch: "",
+      fieldSearch: "",
+      desactivatePrevious: true,
+      desactivateNext: true,
     };
   },
   mounted() {
     this.getTask();
+    this.desactivatePrevious =
+      this.numberPage <= 0 ? this.desactivatePrevious : !this.desactivatePrevious;
+    this.desactivateNext =
+      Object.keys(this.lastEvaluatedKey).length > 0 ? this.desactivateNext : !this.desactivateNext;
   },
   methods: {
-    async getTask() {
+    async getTask(params = {}) {
       this.loadingTable = true;
-      let response = await getData("tasks");
+      let response = await getData("tasks", params);
       if (response.status === 200) {
         this.listTask = response.data.items;
+        this.lastEvaluatedKey = response.data.lastEvaluatedKey;
         this.loadingTable = false;
+        console.log(this.lastEvaluatedKey);
         ElNotification({
           title: "Exito",
           message: response.data.message,
@@ -114,6 +169,38 @@ export default {
     handleDeleteTask(id) {
       this.$emit("deleteTask", id);
     },
+
+    async seeFile(idFile) {
+      console.log("link url", idFile);
+      let response = await downloadData(`file/${idFile}`);
+      console.log(response);
+    },
+
+    previousPage() {
+      console.log(this.desactivatePrevious);
+      if (this.numberPage <= 0) {
+        this.desactivatePrevious = !this.desactivatePrevious;
+      }
+      if (this.numberPage < 0) {
+        this.numberPage--;
+      }
+
+      console.log(this.desactivatePrevious);
+      console.log("click previous");
+    },
+
+    async nextPage() {
+      console.log(Object.keys(this.lastEvaluatedKey).length > 0);
+      if (!this.lastEvaluatedKey) {
+        this.desactivateNext = !this.desactivateNext;
+      }
+      if (Object.keys(this.lastEvaluatedKey).length > 0) {
+        console.log("click next");
+        this.numberPage++;
+
+        this.getTask(JSON.stringify({ exclusiveStartKey: this.lastEvaluatedKey }));
+      }
+    },
   },
 };
 </script>
@@ -125,6 +212,59 @@ export default {
 i {
   margin: 2px 4px;
   font-size: 20px;
+}
+
+table tr td i {
   cursor: pointer;
+}
+.search-header {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0px;
+}
+
+.el-select {
+  margin-right: 10px;
+}
+
+.buttons {
+  padding: 0px;
+}
+.buttons > button {
+  border: none;
+  padding: 5px;
+  background-color: rgb(21, 101, 192);
+  color: white;
+}
+
+.buttons > button:hover {
+  background-color: #90caf9;
+  color: white;
+}
+
+.buttons > i {
+  font-size: 17px;
+}
+
+#page-number {
+  margin: 0 12px;
+  padding: 5px;
+  font-size: 22px;
+}
+
+#see-icon {
+  color: black;
+}
+
+#details-icon {
+  color: #2a8dc9;
+}
+
+#edit-icon {
+  color: rgb(5, 175, 47);
+}
+
+#delete-icon {
+  color: red;
 }
 </style>
