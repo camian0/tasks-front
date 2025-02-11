@@ -1,5 +1,3 @@
-apiUrl: import.meta.env.VITE_API_ENDPOINT_URL;
-
 import { APP_HOST } from "../config/constants.js";
 import { convertXML } from "@/config/constants.js";
 
